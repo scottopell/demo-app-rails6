@@ -4,6 +4,7 @@ class PostsController < ApplicationController
   # GET /posts or /posts.json
   def index
     @posts = Post.all
+    Rails.configuration.statsd.increment('rails.demo.postindex.loaded')
   end
 
   # GET /posts/1 or /posts/1.json
@@ -25,6 +26,7 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.save
+        Rails.configuration.statsd.increment('rails.demo.post.created')
         format.html { redirect_to post_url(@post), notice: "Post was successfully created." }
         format.json { render :show, status: :created, location: @post }
       else
@@ -38,6 +40,7 @@ class PostsController < ApplicationController
   def update
     respond_to do |format|
       if @post.update(post_params)
+        Rails.configuration.statsd.increment('rails.demo.post.updated')
         format.html { redirect_to post_url(@post), notice: "Post was successfully updated." }
         format.json { render :show, status: :ok, location: @post }
       else
@@ -52,6 +55,7 @@ class PostsController < ApplicationController
     @post.destroy
 
     respond_to do |format|
+      Rails.configuration.statsd.increment('rails.demo.post.deleted')
       format.html { redirect_to posts_url, notice: "Post was successfully destroyed." }
       format.json { head :no_content }
     end
